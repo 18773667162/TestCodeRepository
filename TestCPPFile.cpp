@@ -10,6 +10,53 @@ struct LineAndRowInfo
 };
 
 
+static void FillArray(vector<vector<int>>& arr)
+{
+  // 初始化数组
+  if(arr.size() < 9)
+  {
+    return;
+  }
+  LineAndRowInfo lineAndRowInfo;
+  SqStack<LineAndRowInfo*> stack;
+  for(int i = 0; i < 9 ;)
+  {
+    for (int j = 0; j < 9;)
+    {
+      if(arr[i][j] == -1)
+      {
+        lineAndRowInfo.line = i;
+        lineAndRowInfo.row = j;
+        Get_Position_Value(arr, lineAndRowInfo);
+        if(lineAndRowInfo.res.empty())
+        {
+          LineAndRowInfo* temp;
+          // 回溯到上一位置
+          stack.Pop(temp);
+          i = lineAndRowInfo.line;
+          j = lineAndRowInfo.row;
+        }
+        else
+        {
+          if(lineAndRowInfo.index >= lineAndRowInfo.res.size())
+          {
+            LineAndRowInfo* temp;
+            // 回溯到上一位置
+            stack.Pop(temp);
+            i = lineAndRowInfo.line;
+            j = lineAndRowInfo.row;
+            continue;
+          }
+          arr[i][j] = lineAndRowInfo.res[lineAndRowInfo.index++];
+          stack.Push(&lineAndRowInfo);
+          i++;
+          j++;
+        }
+      }
+    }
+  }
+}
+
 static void Get_Position_Value(const vector<vector<int>>& arr, LineAndRowInfo& lineAndRowInfo)
 {
    if(lineAndRowInfo.line < 0 || lineAndRowInfo.line >= arr.size())
